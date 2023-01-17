@@ -1,12 +1,10 @@
-
-
 import React from 'react';
 import './App.css';
 import axios from 'axios';
 
 
-class App extends React.Component{
-  constructor(props){
+class App extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       pokemonData: [],
@@ -16,6 +14,22 @@ class App extends React.Component{
       errorMessage: ''
     }
   }
+
+  // *** GET POKEMON DATA ***
+  handleGetPokemon = async (e) => {
+    e.preventDefault()
+    // TODO: make a call out to the Pokemon API - Axios
+    let pokemonData = await axios.get('https://pokeapi.co/api/v2/pokemon/');
+
+    console.log(pokemonData.data.results);
+
+    // TODO: setState with the data I get back
+    this.setState({
+      pokemonData: pokemonData.data.results
+    });
+
+  }
+
 
   // *** CITY DATA DEMO HANDLERS ***
 
@@ -33,20 +47,19 @@ class App extends React.Component{
 
     try {
       // TODO: need use axios to hit LocationIQ - async/await
-      let url = `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.city}&format=json`
+      let url = `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.city}&format=json&limit=1`
 
-      console.log(url);
       let cityDataFromAxios = await axios.get(url)
-      // console.log(cityDataFromAxios.data)
+      console.log(cityDataFromAxios.data)
       // TODO: save that data to state
       this.setState({
         cityData: cityDataFromAxios.data[0],
-        error: false
+        error: false,
+        cityMap: `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&markers-iceon:tiny-red-cutout|${cityDataFromAxios.data[0].lat},${cityDataFromAxios[0].lon}&zoom=10`
       })
 
-
       //  *** FOR YOUR LAB YOU WILL NEED TO GET A MAP IMAGE SRC. Example: ***
-    // ** `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=47.6038321,-122.3300624&zoom=10`
+      // ** `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=47.6038321,-122.3300624&zoom=10`
 
     } catch (error) {
       console.log(error);
@@ -57,8 +70,8 @@ class App extends React.Component{
     }
   }
 
-  render(){
-    return(
+  render() {
+    return (
       <>
         <h1>API Calls</h1>
 
@@ -74,8 +87,8 @@ class App extends React.Component{
         {/* Ternary - W ? T : F */}
         {
           this.state.error
-          ? <p>{this.state.errorMessage}</p>
-          : <p>{this.state.cityData.display_name}</p>
+            ? <p>{this.state.errorMessage}</p>
+            : <p>{this.state.cityData.display_name}</p>
         }
 
         {/* <form>
